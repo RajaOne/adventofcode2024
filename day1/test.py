@@ -1,12 +1,12 @@
 import unittest
-import part1
+import calc
 
 class TestParts(unittest.TestCase):
-    part1.readFile('test.txt')
+    calc.readFile('test.txt')
     def test_part1(self):
-        self.assertEqual(part1.part1(), 11)
+        self.assertEqual(calc.part1(), 11)
     def test_part2(self):
-        self.assertEqual(part1.part2(), 31)
+        self.assertEqual(calc.part2(), 31)
 
 
 if __name__ == "__main__":
