@@ -3,9 +3,8 @@ import re
 line = ""
 
 def readFile(filename):
-    file = open(filename, 'r')
     global line
-    line = file.readlines()[0]
+    line = open(filename, 'r').readlines()[0]
 
 def part1():
     res = re.findall(r'mul\((\d+,\d+)\)', line)
