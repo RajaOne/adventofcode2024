@@ -1,9 +1,7 @@
 equs = []
 
 def readFile(filename):
-    global equs
-    lines = open(filename, 'r').read().splitlines()
-    for line in lines:
+    for line in open(filename, 'r').read().splitlines():
         sections = line.split(': ')
         equ = {
             'test': int(sections[0]),
@@ -12,23 +10,19 @@ def readFile(filename):
         equs.append(equ)
 
 def check_test(test, total, numbers):
-    if total > test:
-        return False
-    if len(numbers) == 1:
-        return total + numbers[0] == test or total * numbers[0] == test
+    if total > test: return False
+    if len(numbers) == 0: return total == test
     return check_test(test, total + numbers[0], numbers[1:]) or check_test(test, total * numbers[0], numbers[1:])
 
 def check_test2(test, total, numbers):
-    if total > test:
-        return False
-    if len(numbers) == 0:
-        return total == test
+    if total > test: return False
+    if len(numbers) == 0: return total == test
     return (check_test2(test, total + numbers[0], numbers[1:]) or
          check_test2(test, total * numbers[0], numbers[1:]) or
          check_test2(test, int(str(total) + str(numbers[0])), numbers[1:]))
 
 def part1():
-    return sum([equ['test'] for equ in equs if check_test(equ['test'], 0, equ['numbers'])])
+    return sum([equ['test'] for equ in equs if check_test(equ['test'], equ['numbers'][0], equ['numbers'][1:])])
 
 def part2():
     return sum([equ['test'] for equ in equs if check_test2(equ['test'], equ['numbers'][0], equ['numbers'][1:])])
