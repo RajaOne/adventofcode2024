@@ -2,18 +2,12 @@ grid = []
 obstructions = {}
 
 class Point:
-    x = 0
-    y = 0
     def __init__(self, x, y):
         self.x = x
         self.y = y
     def __str__(self): return f'({self.x}, {self.y})'
     def __eq__(self, other): return self.x == other.x and self.y == other.y
     def __hash__(self): return hash((self.x, self.y))
-    def up(self): return Point(self.x, self.y - 1)
-    def down(self): return Point(self.x, self.y + 1)
-    def left(self): return Point(self.x - 1, self.y)
-    def right(self): return Point(self.x + 1, self.y)
     def add(self, other): return Point(self.x + other.x, self.y + other.y)
 
 right_dir = Point(1, 0)
@@ -45,8 +39,7 @@ def traverse(p):
     d = up_dir
     while True:
         next_p = p.add(d)
-        if next_p.y < 0 or next_p.y >= len(grid) or next_p.x < 0 or next_p.x >= len(grid[next_p.y]):
-            return
+        if outside_grid(next_p): return
         c = grid[next_p.y][next_p.x]
         if c == '#':
             d = turnRight(d)
@@ -61,16 +54,14 @@ def traverse_with_dir(p):
     counter = 0
     while True:
         counter += 1
-        if counter%100 == 0:
-            print(f'counter: {counter}/5700')
+        if counter%100 == 0: print(f'counter: {counter}/5700')
         next_p = p.add(d)
-        if outside_grid(next_p):
-            return
+        if outside_grid(next_p): return
         c = grid[next_p.y][next_p.x]
         if c == '#':
             d = turnRight(d)
             continue
-        if c == '.' or c in ('^', '>', 'v', '<'):
+        if c in ('.', '^'):
             p = next_p
             if is_euclidean(p, start_p):
                 obstructions[p] = True
