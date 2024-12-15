@@ -10,77 +10,42 @@ def readFile(filename):
         dx, dy = re.findall(r'(\d+)', line[2])
         machines.append({'ax': int(ax), 'ay': int(ay), 'bx': int(bx), 'by': int(by), 'dx': int(dx), 'dy': int(dy)})
 
-paths = []
-
-def check_node2(machine, x, y, actions, score):
+def check_node2(machine):
     b_incline = machine['by'] / machine['bx']
     a_incline = machine['ay'] / machine['ax']
     d_incline = machine['dy'] / machine['dx']
 
-    if d_incline < a_incline and d_incline < b_incline:
-        return
-    if d_incline > a_incline and d_incline > b_incline:
-        return
+    if d_incline < a_incline and d_incline < b_incline: return 0
+    if d_incline > a_incline and d_incline > b_incline: return 0
 
-    if a_incline <= d_incline:
-        a_start = 0
-        a_end = machine['dx']/machine['ax']
+    switch = False
+    if a_incline > d_incline:
+        switch = True
 
+    a_start = 0
+    a_end = machine['dx']/machine['ax']
+    while True:
         a_mid = int((a_end + a_start) / 2)
         calc_x = machine['ax'] * a_mid
         calc_y = machine['ay'] * a_mid
-        while a_start != a_mid:
-            if (machine['dy'] - calc_y) / (machine['dx'] - calc_x) == b_incline:
-                break
-            if (machine['dy'] - calc_y) / (machine['dx'] - calc_x) < b_incline:
-                a_start = a_mid
-            if (machine['dy'] - calc_y) / (machine['dx'] - calc_x) > b_incline:
-                a_end = a_mid
-            a_mid = int((a_end + a_start) / 2)
-            calc_x = machine['ax'] * a_mid
-            calc_y = machine['ay'] * a_mid
-        if (machine['dy'] - calc_y) / (machine['dx'] - calc_x) != b_incline:
-            return
-        score += 3 * a_mid
-        if (machine['dx'] - calc_x)/machine['bx'] == int((machine['dx'] - calc_x)/machine['bx']):
-            score += int((machine['dx'] - calc_x)/machine['bx'])
-        else:
-            return
-        paths.append((actions, score))
-    else :
-        b_start = 0
-        b_end = machine['dx']/machine['bx']
-
-        b_mid = int((b_end + b_start) / 2)
-        calc_x = machine['bx'] * b_mid
-        calc_y = machine['by'] * b_mid
-        while b_start != b_mid:
-            if (machine['dy'] - calc_y) / (machine['dx'] - calc_x) == a_incline:
-                break
-            if (machine['dy'] - calc_y) / (machine['dx'] - calc_x) < a_incline:
-                b_start = b_mid
-            if (machine['dy'] - calc_y) / (machine['dx'] - calc_x) > a_incline:
-                b_end = b_mid
-            b_mid = int((b_end + b_start) / 2)
-            calc_x = machine['bx'] * b_mid
-            calc_y = machine['by'] * b_mid
-        if (machine['dy'] - calc_y) / (machine['dx'] - calc_x) != a_incline:
-            return
-        score += 1 * b_mid
-        if (machine['dx'] - calc_x)/machine['ax'] == int((machine['dx'] - calc_x)/machine['ax']):
-            score += 3 * int((machine['dx'] - calc_x)/machine['ax'])
-        else:
-            return
-        paths.append((actions, score))
-    return
+        calc_incline = (machine['dy'] - calc_y) / (machine['dx'] - calc_x)
+        if a_start == a_mid:
+            break
+        if calc_incline == b_incline:
+            break
+        if (switch and calc_incline > b_incline) or (not switch and calc_incline < b_incline):
+            a_start = a_mid
+        if (switch and calc_incline < b_incline) or (not switch and calc_incline > b_incline):
+            a_end = a_mid
+    if calc_incline != b_incline: return 0
+    b_mid = (machine['dx'] - calc_x) / machine['bx']
+    if b_mid != int(b_mid): return 0
+    return (3 * a_mid) + int(b_mid)
 
 def part1():
     total = 0
     for machine in machines:
-        paths.clear()
-        check_node2(machine, 0, 0, [], 0)
-        if len(paths) > 0:
-            total += paths[0][1]
+        total += check_node2(machine)
     return total
 
 def part2():
