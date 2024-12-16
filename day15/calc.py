@@ -100,9 +100,19 @@ def part1():
     return total
 
 def part2():
+    new_grid = []
+    for g in grid:
+        new_g = []
+        for c in g:
+            if c == '#': new_g = new_g + ['#', '#']
+            if c == '.': new_g = new_g + ['.', '.']
+            if c == '@': new_g = new_g + ['@', '.']
+            if c == 'O': new_g = new_g + ['[', ']']
+        new_grid.append(new_g)
+
     return 0
 
 if __name__ == "__main__":
     readFile('input.txt')
-    print(f'part1 is\n\t {part1()}\n\t(.. is correct)')
+    print(f'part1 is\n\t {part1()}\n\t(1429911 is correct)')
     print(f'part2 is\n\t {part2()}\n\t(.. is correct)')
